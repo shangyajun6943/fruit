@@ -1,0 +1,84 @@
+{% extends "common/base.html" %}
+{% load static %}
+{%block cssjs%}{%endblock%}
+{% block title %}购物车{% endblock %}
+
+{% block content %}
+    <div class="total_count">全部商品<em>0</em>件</div>
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+
+
+    {%for item in shopcart.order_item_list %}
+	<ul class="cart_list_td clearfix">
+		<li class="col01"><input type="checkbox" name="" checked></li>
+		<li class="col02"><a href="{% url 'showgoods:detial' item.product.id %}"><img src="{% static item.product.img1 %}"></a></li>
+		<li class="col03"><a href="{% url 'showgoods:detial' item.product.id %}" style="text-decoration: none">{{item.product.goodsname}}</a><br><em>{{item.product.price}}元/500g</em></li>
+		<li class="col04">500g</li>
+		<li class="col05">{{item.product.price}}</li>
+		<li class="col06">
+			<div class="num_add">
+				<a href="javascript:;" class="add fl">+</a>
+				<input type="text" class="num_show fl" value="{{item.order_item.quantity}}">
+				<a href="javascript:;" class="minus fl">-</a>
+			</div>
+		</li>
+		<li class="col07">{{item.product.price}}元</li>
+		<li class="col08"><a href="javascript:;" itemid="{{item.order_item.id}}">删除</a></li>
+	</ul>
+	{%endfor%}
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col02">全选</li>
+		<li class="col03 col-sum">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col04"><a href="{% url 'shopcart:place_order' %}">去结算</a></li>
+	</ul>
+<script>
+	var $num=$(".cart_list_td");
+	var $num_show=$(".total_count>em");
+	$num_show.html($num.length);
+	var $num_col3=$(".col03>b");
+	$num_col3.html($num.length);
+
+	var sum_total=function(){
+		var sum=0;
+		var $num_col3=$(".col-sum>em");
+		var $num_col07=$(".col07");
+		$.each($num_col07,function(index,value){
+			sum+=parseInt($(value).html())
+		});
+		console.log(sum);
+		$num_col3.html(sum);
+	};
+	sum_total();
+
+
+
+	var $dela=$(".col08>a");
+	$dela.click(function(){
+		var $id=$(this).attr("itemid");
+    	url1="/shopcart/remove";
+    	data1={
+        	"orderid":$id
+    	};
+    	remove(url1,data1);
+	});
+	var remove=function (url1,data1) {
+    	$.ajax({
+			type:"post",
+			url:url1,
+			data:data1,
+			async:true,
+			success:function (result) {
+				$(window).attr('location','/shopcart/show');
+			}
+		});
+	};
+</script>
+{% endblock %}

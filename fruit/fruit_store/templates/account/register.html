@@ -1,0 +1,182 @@
+{% extends "common/base.html" %}
+{% load static %}
+{%block cssjs%}{%endblock%}
+{% block title %}注册{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo" href="{% url 'index' %}"><img src="{% static 'images/logo02.png' %}"></a>
+			<div class="reg_slogan">一招鲜，吃遍天！</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>用户注册</h1>
+				<a href="{% url 'account:login' %}">登录</a>
+			</div>
+			<div class="reg_form clearfix">
+				<form action="{% url 'account:do_register' %}" method="post" >
+				{% csrf_token %}
+				<ul>
+					<li>
+						<label>用户名:</label>
+						<input type="text" name="user_name" id="user_name">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>密码:</label>
+						<input type="password" name="pwd" id="pwd">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>确认密码:</label>
+						<input type="password" name="cpwd" id="cpwd">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li>
+						<label>邮箱:</label>
+						<input type="text" name="email" id="email">
+						<span class="error_tip">提示信息</span>
+					</li>
+					<li class="agreement">
+						<input type="checkbox" name="allow" id="allow" checked="checked">
+						<label>同意”一招鲜用户使用协议“</label>
+						<span class="error_tip2">提示信息</span>
+					</li>
+					<li class="reg_sub">
+                        
+						<input type="submit" value="注 册" name="">
+					</li>
+				</ul>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- <script src="{%static 'js/register.js' %}"></script> -->
+	<script>
+	var error_name = false;
+	var error_password = false;
+	var error_check_password = false;
+	var error_email = false;
+	var error_check = false;
+
+$("input[name='user_name']").blur(function() {
+		check_user_name(this);
+		});
+	function check_user_name(this1){
+			var len = $(this1).val().length;
+			if(len<5||len>20)
+			{
+				$(this1).next().html('请输入5-20个字符的用户名')
+				$(this1).next().show();
+				error_name = true;
+			}
+			else
+			{
+				$(this1).next().hide();
+				error_name = false;
+			};
+	};
+		$("input[name='pwd']").blur(function() {
+			check_pwd(this);
+		});
+			function check_pwd(this1){
+			var len = $(this1).val().length;
+			if(len<8||len>20)
+			{
+			$(this1).next().html('密码最少8位，最长20位')
+			$(this1).next().show();
+			error_password = true;
+			}
+			else
+			{
+			$(this1).next().hide();
+			error_password = false;
+			}		
+		};
+
+
+
+
+	$('#email').blur(function() {
+		check_email();
+	});
+
+	$('#allow').click(function() {
+		if($(this).is(':checked'))
+		{
+			error_check = false;
+			$(this).siblings('span').hide();
+		}
+		else
+		{
+			error_check = true;
+			$(this).siblings('span').html('请勾选同意');
+			$(this).siblings('span').show();
+		}
+	});
+	$("input[name='cpwd']").blur(function() {
+		check_cpwd(this);
+		});
+	function check_cpwd(this1){
+		var pass = $("input[name='pwd']").val();
+		var cpass = $(this1).val();
+
+		if(pass!=cpass)
+		{
+			$(this1).next().html('两次输入的密码不一致')
+			$(this1).next().show();
+			error_check_password = true;
+		}
+		else
+		{
+			$(this1).next().hide();
+			error_check_password = false;
+		};	
+		
+	};
+	function check_email(){
+		var re = /^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$/;
+
+		if(re.test($('#email').val()))
+		{
+			$('#email').next().hide();
+			error_email = false;
+		}
+		else
+		{
+			$('#email').next().html('你输入的邮箱格式不正确')
+			$('#email').next().show();
+			error_check_password = true;
+		}
+
+	};
+
+
+	$('#reg_form').submit(function() {
+		check_user_name();
+		check_pwd();
+		check_cpwd();
+		check_email();
+
+		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	});
+	
+	</script>
+{% endblock %}
